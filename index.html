@@ -7,7 +7,7 @@
 <meta name="description" content="Claude Code 速查表 - 按使用场景组织的中文快速参考，涵盖命令、快捷键、Skills、MCP 等">
 <meta name="keywords" content="Claude Code, cheatsheet, 速查表, AI coding, CLI, shortcuts, MCP, Skills">
 <meta property="og:title" content="Claude Code 速查表">
-<meta property="og:description" content="按使用场景组织，3秒扫到分类，10秒找到说法，30秒开始用">
+<meta property="og:description" content="按使用场景组织的中文快速参考，涵盖命令、快捷键、Skills、MCP 等">
 <meta property="og:type" content="website">
 <style>
 :root {
@@ -22,6 +22,7 @@
   --code-bg: #f5f2ee;
   --shadow: 0 1px 3px rgba(0,0,0,0.06);
   --radius: 8px;
+  --sidebar-width: 180px;
 }
 
 [data-theme="dark"] {
@@ -47,37 +48,139 @@ body {
   transition: background 0.2s, color 0.2s;
 }
 
-/* Header */
-.header {
-  text-align: center;
-  padding: 2rem 1rem 1rem;
-  max-width: 900px;
+/* Layout */
+.layout {
+  display: flex;
+  max-width: 1100px;
   margin: 0 auto;
 }
-.header h1 {
+
+/* Sidebar */
+.sidebar {
+  width: var(--sidebar-width);
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0.5rem 1.5rem 0.75rem;
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  background: var(--bg);
+  z-index: 10;
+}
+.sidebar-nav {
+  list-style: none;
+  width: 100%;
+}
+.sidebar-nav > li {
+  margin-bottom: 0.25rem;
+}
+.sidebar-nav > li > a {
+  display: block;
+  padding: 0.4rem 0.5rem;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.84rem;
+  font-weight: 500;
+  transition: all 0.15s;
+}
+.sidebar-nav > li > a:hover {
+  color: var(--accent);
+  background: var(--accent-light);
+}
+.sidebar-nav > li > a.active {
+  color: var(--accent);
+  background: var(--accent-light);
+  font-weight: 600;
+}
+
+/* Sidebar sub-items */
+.sidebar-sub {
+  list-style: none;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+.sidebar-sub.expanded {
+  max-height: 500px;
+}
+.sidebar-sub li {
+  margin-bottom: 0.1rem;
+}
+.sidebar-sub a {
+  display: block;
+  padding: 0.25rem 0.6rem 0.25rem 1.2rem;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: all 0.15s;
+  opacity: 0.85;
+}
+.sidebar-sub a:hover {
+  color: var(--accent);
+  background: var(--accent-light);
+  opacity: 1;
+}
+.sidebar-sub a.active {
+  color: var(--accent);
+  opacity: 1;
+}
+
+/* Mobile hamburger */
+.hamburger {
+  display: none;
+  position: fixed;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 101;
+  background: var(--card-bg);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.4rem 0.55rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--text);
+  box-shadow: var(--shadow);
+}
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 99;
+}
+
+/* Content area */
+.content {
+  flex: 1;
+  min-width: 0;
+  padding: 0 1rem 3rem;
+}
+
+/* Header */
+.header {
+  padding: 1.5rem 0 0.5rem;
+}
+.header-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.header-title-row h1 {
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--accent);
-  margin-bottom: 0.3rem;
-}
-.header p {
-  color: var(--text-secondary);
-  font-size: 0.95rem;
 }
 
-/* Controls */
-.controls {
-  max-width: 900px;
-  margin: 1rem auto;
-  padding: 0 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  align-items: center;
-}
 .search-box {
-  flex: 1;
-  min-width: 200px;
+  width: 100%;
   padding: 0.6rem 1rem;
   border: 1.5px solid var(--border);
   border-radius: var(--radius);
@@ -86,31 +189,13 @@ body {
   color: var(--text);
   outline: none;
   transition: border-color 0.2s;
+  margin-bottom: 1.5rem;
 }
 .search-box:focus { border-color: var(--accent); }
 .search-box::placeholder { color: var(--text-secondary); opacity: 0.7; }
 
-.tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-.tag {
-  padding: 0.3rem 0.7rem;
-  border-radius: 99px;
-  font-size: 0.8rem;
-  cursor: pointer;
-  border: 1.5px solid var(--border);
-  background: var(--card-bg);
-  color: var(--text-secondary);
-  transition: all 0.15s;
-  user-select: none;
-}
-.tag:hover { border-color: var(--accent); color: var(--accent); }
-.tag.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-
 .theme-btn {
-  padding: 0.3rem 0.7rem;
+  padding: 0.45rem 0.7rem;
   border-radius: 99px;
   font-size: 0.85rem;
   cursor: pointer;
@@ -118,19 +203,14 @@ body {
   background: var(--card-bg);
   color: var(--text-secondary);
   transition: all 0.15s;
+  flex-shrink: 0;
 }
 .theme-btn:hover { border-color: var(--accent); color: var(--accent); }
 
-/* Main */
-.main {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 0.5rem 1rem 3rem;
-}
-
 /* Section */
 .section {
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  scroll-margin-top: 1rem;
 }
 .section-title {
   font-size: 1.15rem;
@@ -151,13 +231,19 @@ body {
 /* Card */
 .card {
   background: var(--card-bg);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius);
   padding: 0.9rem 1rem;
   box-shadow: var(--shadow);
-  transition: box-shadow 0.15s, opacity 0.2s;
+  transition: box-shadow 0.15s, border-color 0.2s, opacity 0.2s;
+  cursor: pointer;
+  scroll-margin-top: 1rem;
 }
 .card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.card.focused {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-light), 0 2px 8px rgba(0,0,0,0.1);
+}
 .card h3 {
   font-size: 0.95rem;
   font-weight: 600;
@@ -177,6 +263,12 @@ body {
   padding: 0.1rem 0.35rem;
   border-radius: 4px;
   word-break: break-all;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.card code:hover {
+  background: var(--accent-light);
+  color: var(--accent);
 }
 .card .tip {
   margin-top: 0.5rem;
@@ -197,6 +289,10 @@ body {
   color: var(--text);
   white-space: pre-wrap;
   word-break: break-word;
+}
+.card .deprecated {
+  text-decoration: line-through;
+  opacity: 0.6;
 }
 
 /* Table-style card */
@@ -228,6 +324,12 @@ body {
   background: var(--code-bg);
   padding: 0.1rem 0.35rem;
   border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.table-card code:hover {
+  background: var(--accent-light);
+  color: var(--accent);
 }
 
 /* No results */
@@ -241,369 +343,585 @@ body {
 /* Hidden */
 .hidden { display: none !important; }
 
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--accent);
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border-radius: 99px;
+  font-size: 0.88rem;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+  z-index: 200;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
 /* Print */
 @media print {
   body { background: #fff; color: #000; font-size: 11pt; }
-  .controls, .theme-btn { display: none !important; }
+  .sidebar, .hamburger, .sidebar-overlay, .theme-btn, .toast { display: none !important; }
+  .layout { display: block; }
+  .content { padding: 0; }
   .header { padding: 0.5rem 0; }
-  .header h1 { font-size: 16pt; }
-  .main { padding: 0; }
+  .header-title-row h1 { font-size: 16pt; }
   .section { page-break-inside: avoid; margin-bottom: 1rem; }
-  .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; }
+  .card { box-shadow: none; border: 1px solid #ccc; break-inside: avoid; cursor: default; }
   .cards { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
   .table-card { grid-column: 1 / -1; }
+  .card code { cursor: default; }
   [data-theme="dark"] { --bg: #fff; --card-bg: #fff; --text: #000; --text-secondary: #333; --border: #ccc; --code-bg: #f0f0f0; --accent-light: #f5e6df; }
 }
 
 /* Responsive */
-@media (max-width: 600px) {
-  .header h1 { font-size: 1.4rem; }
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    width: 260px;
+    height: 100vh;
+    transition: left 0.3s;
+    z-index: 100;
+    box-shadow: none;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+  .sidebar.open {
+    left: 0;
+    box-shadow: 4px 0 16px rgba(0,0,0,0.15);
+  }
+  .sidebar-overlay.open {
+    display: block;
+  }
+  .hamburger {
+    display: block;
+  }
+  .layout {
+    display: block;
+  }
+  .content {
+    padding: 0 1rem 3rem;
+  }
+  .header {
+    padding-top: 3rem;
+  }
+  .header-title-row h1 { font-size: 1.4rem; }
   .cards { grid-template-columns: 1fr; }
-  .controls { flex-direction: column; }
-  .search-box { width: 100%; }
 }
 </style>
 </head>
 <body>
 
-<div class="header">
-  <h1>Claude Code 速查表</h1>
-  <p>按"我想做什么"组织 · 3 秒扫到分类 · 10 秒找到说法 · 30 秒开始用</p>
-</div>
+<button class="hamburger" id="hamburger" aria-label="打开菜单">☰</button>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-<div class="controls">
-  <input type="text" class="search-box" placeholder="搜索：输入中文关键词或英文命令..." id="search">
-  <div class="tags" id="tags">
-    <span class="tag active" data-section="all">全部</span>
-    <span class="tag" data-section="quick-start">快速上手</span>
-    <span class="tag" data-section="commands">命令速查</span>
-    <span class="tag" data-section="scenarios">高频场景</span>
-    <span class="tag" data-section="memory">记忆规则</span>
-    <span class="tag" data-section="skills">Skills</span>
-    <span class="tag" data-section="mcp">MCP</span>
-    <span class="tag" data-section="vscode">VS Code</span>
-    <span class="tag" data-section="tips">避坑指南</span>
-  </div>
-  <button class="theme-btn" id="themeToggle" title="切换主题">🌙</button>
-</div>
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <ul class="sidebar-nav" id="sidebarNav">
+      <li>
+        <a href="#section-startup" data-section="section-startup">启动与配置</a>
+        <ul class="sidebar-sub" data-parent="section-startup">
+          <li><a href="#card-install">安装</a></li>
+          <li><a href="#card-start">启动</a></li>
+          <li><a href="#card-upgrade">升级</a></li>
+          <li><a href="#card-cli-params">CLI 启动参数</a></li>
+          <li><a href="#card-pipe">管道输入</a></li>
+          <li><a href="#card-config">config 系列</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#section-session" data-section="section-session">会话内操作</a>
+        <ul class="sidebar-sub" data-parent="section-session">
+          <li><a href="#card-slash">Slash 命令</a></li>
+          <li><a href="#card-shortcuts">快捷键</a></li>
+          <li><a href="#card-bash">Bash 模式</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#section-skills-mcp" data-section="section-skills-mcp">Skills 与 MCP</a>
+        <ul class="sidebar-sub" data-parent="section-skills-mcp">
+          <li><a href="#card-skills">Skills</a></li>
+          <li><a href="#card-skill-path">Skill 存放位置</a></li>
+          <li><a href="#card-builtin-skills">内置 Skill</a></li>
+          <li><a href="#card-mcp-cmd">MCP 命令</a></li>
+          <li><a href="#card-mcp-scope">MCP 配置层级</a></li>
+          <li><a href="#card-mcp-example">MCP 示例</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#section-mechanism" data-section="section-mechanism">机制详解</a>
+        <ul class="sidebar-sub" data-parent="section-mechanism">
+          <li><a href="#card-claude-md">CLAUDE.md 层级</a></li>
+          <li><a href="#card-context">上下文管理</a></li>
+          <li><a href="#card-permission">权限模式</a></li>
+        </ul>
+      </li>
+      <li>
+        <a href="#section-advanced" data-section="section-advanced">进阶技巧</a>
+        <ul class="sidebar-sub" data-parent="section-advanced">
+          <li><a href="#card-adv-file">指定文件/代码</a></li>
+          <li><a href="#card-adv-understand">看懂项目</a></li>
+          <li><a href="#card-adv-modify">修改代码</a></li>
+          <li><a href="#card-adv-bug">修 Bug</a></li>
+          <li><a href="#card-adv-feature">加新功能</a></li>
+          <li><a href="#card-adv-run">跑命令/测试</a></li>
+          <li><a href="#card-adv-vscode">VS Code 专区</a></li>
+        </ul>
+      </li>
+    </ul>
+  </aside>
 
-<div class="main" id="main">
-
-  <!-- A. 快速上手 -->
-  <div class="section" data-section="quick-start" data-search="安装 启动 开始 入门 install npm claude 继续 对话 非交互 脚本 快速 resume 恢复 历史 会话">
-    <div class="section-title">A. 快速上手</div>
-    <div class="cards">
-      <div class="card" data-search="安装 install npm">
-        <h3>安装</h3>
-        <p><code>npm install -g @anthropic-ai/claude-code</code></p>
+  <div class="content">
+    <div class="header">
+      <div class="header-title-row">
+        <h1>Claude Code 速查表</h1>
+        <button class="theme-btn" id="themeToggle" title="切换主题">🌙</button>
       </div>
-      <div class="card" data-search="启动 开始 进入 项目 cd">
-        <h3>启动</h3>
-        <p><code>cd 项目目录 && claude</code></p>
-      </div>
-      <div class="card table-card" data-search="继续 上次 对话 恢复 resume 历史 选择 模型 model verbose 非交互 脚本 pipe session branch 分支">
-        <h3>会话管理</h3>
-        <table>
-          <thead><tr><th>命令</th><th>说明</th></tr></thead>
-          <tbody>
-            <tr><td><code>claude</code></td><td>启动新对话</td></tr>
-            <tr><td><code>claude -c</code></td><td>继续最近一次对话</td></tr>
-            <tr><td><code>claude --resume</code></td><td>从历史对话列表中选择一个继续</td></tr>
-            <tr><td><code>claude --resume &lt;id&gt;</code></td><td>继续指定的历史对话</td></tr>
-            <tr><td><code>claude -p "问题"</code></td><td>非交互模式（直接输出结果，适合脚本）</td></tr>
-            <tr><td><code>claude --model opus</code></td><td>指定模型启动（<code>opus</code> / <code>sonnet</code> / <code>haiku</code>）</td></tr>
-            <tr><td><code>claude --verbose</code></td><td>显示详细日志</td></tr>
-          </tbody>
-        </table>
-      </div>
+      <input type="text" class="search-box" placeholder="搜索：输入中文关键词或英文命令..." id="search">
     </div>
-  </div>
 
-  <!-- B. 命令速查：Slash 命令 -->
-  <div class="section" data-section="commands" data-search="命令 slash command 斜杠 速查">
-    <div class="section-title">B. 命令速查 — Slash 命令（会话中输入）</div>
-    <div class="cards">
-      <div class="card table-card" data-search="help compact clear memory model review cost rewind init doctor context resume 帮助 压缩 上下文 清空 记忆 模型 审查 diff 花费 费用 撤销 初始化 诊断 配置 历史 对话 指令">
-        <table>
-          <thead><tr><th>命令</th><th>作用</th><th>什么时候用</th></tr></thead>
-          <tbody>
-            <tr><td><code>/help</code></td><td>查看帮助</td><td>忘了命令时</td></tr>
-            <tr><td><code>/compact</code></td><td>压缩上下文</td><td>对话太长、快满时</td></tr>
-            <tr><td><code>/compact [指令]</code></td><td>带指令压缩</td><td>只保留某部分上下文</td></tr>
-            <tr><td><code>/clear</code></td><td>清空对话</td><td>换任务时</td></tr>
-            <tr><td><code>/model</code></td><td>切换模型</td><td>换更强/更快的模型</td></tr>
-            <tr><td><code>/cost</code></td><td>查看本次花费</td><td>想看花了多少钱</td></tr>
-            <tr><td><code>/review</code></td><td>代码审查</td><td>基于 git diff 审查改动</td></tr>
-            <tr><td><code>/rewind</code></td><td>撤销上一步</td><td>Claude 改错了想回退</td></tr>
-            <tr><td><code>/memory</code></td><td>查看/编辑记忆</td><td>管理持久化记忆</td></tr>
-            <tr><td><code>/init</code></td><td>初始化 CLAUDE.md</td><td>快速创建项目规则文件</td></tr>
-            <tr><td><code>/doctor</code></td><td>诊断配置</td><td>遇到问题先跑这个</td></tr>
-            <tr><td><code>/context</code></td><td>查看上下文使用</td><td>看还剩多少空间</td></tr>
-            <tr><td><code>/resume</code></td><td>选择历史对话</td><td>在会话中切换到其他对话</td></tr>
-          </tbody>
-        </table>
+    <div id="main">
+
+      <!-- ==================== A. 启动与配置 ==================== -->
+      <div class="section" id="section-startup" data-search="启动 配置 安装 install npm claude 管道 pipe config 设置 升级 update upgrade homebrew brew">
+        <div class="section-title">A. 启动与配置</div>
+        <div class="cards">
+          <div class="card" id="card-install" data-search="安装 install npm curl homebrew brew">
+            <h3>安装</h3>
+            <p><code>curl -fsSL https://claude.ai/install.sh | bash</code></p>
+            <p style="margin-top:0.3rem;font-size:0.82rem;color:var(--text-secondary)">备选方式：</p>
+            <p><code>npm install -g @anthropic-ai/claude-code</code></p>
+            <p><code>brew install --cask claude-code</code></p>
+          </div>
+          <div class="card" id="card-start" data-search="启动 开始 进入 项目 cd">
+            <h3>启动</h3>
+            <p><code>cd 项目目录 && claude</code></p>
+          </div>
+          <div class="card" id="card-upgrade" data-search="升级 更新 update upgrade brew homebrew">
+            <h3>升级</h3>
+            <p><code>claude update</code></p>
+            <p style="margin-top:0.3rem;font-size:0.82rem;color:var(--text-secondary)">Homebrew 安装：</p>
+            <p><code>brew upgrade claude-code</code></p>
+            <div class="tip">原生安装（curl）支持自动更新，也可手动 <code>claude update</code> 触发</div>
+          </div>
+          <div class="card table-card" id="card-cli-params" data-search="继续 上次 对话 恢复 resume 历史 选择 模型 model verbose 非交互 脚本 pipe session branch 分支 启动 参数 cli worktree 工作树">
+            <h3>CLI 启动参数</h3>
+            <table>
+              <thead><tr><th>命令</th><th>说明</th></tr></thead>
+              <tbody>
+                <tr><td><code>claude</code></td><td>启动新对话</td></tr>
+                <tr><td><code>claude -c</code></td><td>继续最近一次对话</td></tr>
+                <tr><td><code>claude --resume</code></td><td>从历史对话列表中选择一个继续</td></tr>
+                <tr><td><code>claude -r &lt;id&gt;</code></td><td>继续指定的历史对话（<code>--resume</code> 短参数）</td></tr>
+                <tr><td><code>claude -p "问题"</code></td><td>非交互模式（直接输出结果，适合脚本）</td></tr>
+                <tr><td><code>claude --model opus</code></td><td>指定模型启动（<code>opus</code> / <code>sonnet</code> / <code>haiku</code>）</td></tr>
+                <tr><td><code>claude --verbose</code></td><td>显示详细日志</td></tr>
+                <tr><td><code>claude -w</code></td><td>工作树隔离模式（<code>--worktree</code>）</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card table-card" id="card-pipe" data-search="管道 pipe 输入 cat git diff 脚本 非交互 stdin 文件内容">
+            <h3>管道输入</h3>
+            <table>
+              <thead><tr><th>用法</th><th>说明</th></tr></thead>
+              <tbody>
+                <tr><td><code>cat file.ts | claude "解释这段代码"</code></td><td>把文件内容传给 Claude</td></tr>
+                <tr><td><code>git diff | claude "review 这个改动"</code></td><td>把 diff 传给 Claude 审查</td></tr>
+                <tr><td><code>cat error.log | claude -p "分析错误原因"</code></td><td>分析日志，非交互输出结果</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card table-card" id="card-config" data-search="config 配置 设置 权限 permission model 模型 key api 密钥 claude config set get list">
+            <h3>claude config 系列</h3>
+            <table>
+              <thead><tr><th>命令</th><th>说明</th></tr></thead>
+              <tbody>
+                <tr><td><code>claude config set</code></td><td>设置配置项</td></tr>
+                <tr><td><code>claude config get</code></td><td>查看某个配置项</td></tr>
+                <tr><td><code>claude config list</code></td><td>列出所有配置</td></tr>
+              </tbody>
+            </table>
+            <div class="tip">配置文件位置：<code>~/.claude.json</code>（全局）、项目根目录 <code>.claude/config.json</code>（项目级）</div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- B. 命令速查：快捷键 -->
-  <div class="section" data-section="commands" data-search="快捷键 键盘 shortcut keyboard 速查">
-    <div class="section-title">B. 命令速查 — 快捷键</div>
-    <div class="cards">
-      <div class="card table-card" data-search="shift tab plan 模式 自动 接受 thinking 思考 esc 撤销 记忆 中断 ctrl">
-        <table>
-          <thead><tr><th>快捷键</th><th>作用</th></tr></thead>
-          <tbody>
-            <tr><td><code>Shift+Tab</code></td><td>切换模式：普通 → 自动接受 → Plan 模式</td></tr>
-            <tr><td><code>Tab</code></td><td>开关深度思考（Extended Thinking）</td></tr>
-            <tr><td><code>Esc Esc</code></td><td>打开撤销菜单</td></tr>
-            <tr><td><code>#</code></td><td>添加记忆</td></tr>
-            <tr><td><code>Ctrl+C</code></td><td>中断当前操作</td></tr>
-          </tbody>
-        </table>
+      <!-- ==================== B. 会话内操作 ==================== -->
+      <div class="section" id="section-session" data-search="会话 操作 命令 slash command 快捷键 keyboard shortcut bash">
+        <div class="section-title">B. 会话内操作</div>
+        <div class="cards">
+          <div class="card table-card" id="card-slash" data-search="help compact clear memory model review cost rewind init doctor context resume diff mcp config settings permissions fast 帮助 压缩 上下文 清空 记忆 模型 审查 花费 费用 撤销 初始化 诊断 配置 历史 对话 指令 slash 斜杠 弃用 权限 快速">
+            <h3>Slash 命令</h3>
+            <table>
+              <thead><tr><th>命令</th><th>作用</th><th>什么时候用</th></tr></thead>
+              <tbody>
+                <tr><td><code>/help</code></td><td>查看帮助</td><td>忘了命令时</td></tr>
+                <tr><td><code>/compact</code></td><td>压缩上下文</td><td>对话太长、快满时</td></tr>
+                <tr><td><code>/compact [指令]</code></td><td>带指令压缩</td><td>只保留某部分上下文</td></tr>
+                <tr><td><code>/clear</code></td><td>清空对话</td><td>换任务时</td></tr>
+                <tr><td><code>/model</code></td><td>切换模型</td><td>换更强/更快的模型</td></tr>
+                <tr><td><code>/cost</code></td><td>查看本次花费</td><td>想看花了多少钱</td></tr>
+                <tr><td><code>/diff</code></td><td>查看未提交的 diff</td><td>看当前改了什么</td></tr>
+                <tr><td><code>/rewind</code></td><td>撤销上一步</td><td>Claude 改错了想回退</td></tr>
+                <tr><td><code>/memory</code></td><td>查看/编辑记忆</td><td>管理持久化记忆</td></tr>
+                <tr><td><code>/init</code></td><td>初始化 CLAUDE.md</td><td>快速创建项目规则文件</td></tr>
+                <tr><td><code>/doctor</code></td><td>诊断配置</td><td>遇到问题先跑这个</td></tr>
+                <tr><td><code>/context</code></td><td>查看上下文使用</td><td>看还剩多少空间</td></tr>
+                <tr><td><code>/resume</code></td><td>选择历史对话</td><td>在会话中切换到其他对话</td></tr>
+                <tr><td><code>/mcp</code></td><td>管理 MCP 连接和 OAuth</td><td>添加/管理 MCP 服务器</td></tr>
+                <tr><td><code>/config</code></td><td>打开设置界面</td><td>修改配置（别名 <code>/settings</code>）</td></tr>
+                <tr><td><code>/permissions</code></td><td>查看/更新权限</td><td>管理工具权限</td></tr>
+                <tr><td><code>/fast</code></td><td>切换快速模式</td><td>加速输出（同模型）</td></tr>
+                <tr><td><span class="deprecated"><code>/review</code></span></td><td><span class="deprecated">代码审查（已弃用）</span></td><td>改用 code-review 插件</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card table-card" id="card-shortcuts" data-search="shift tab plan 模式 自动 接受 thinking 思考 esc 撤销 记忆 中断 ctrl 快捷键 keyboard shortcut 键盘 option alt 深度 退出 清屏 文件 补全 @ 问号">
+            <h3>快捷键</h3>
+            <table>
+              <thead><tr><th>快捷键</th><th>作用</th></tr></thead>
+              <tbody>
+                <tr><td><code>Shift+Tab</code> / <code>Alt+M</code></td><td>切换模式：普通 → 自动接受 → Plan 模式</td></tr>
+                <tr><td><code>Option+T</code>（macOS）/ <code>Alt+T</code></td><td>开关深度思考（Extended Thinking）</td></tr>
+                <tr><td><code>Esc Esc</code></td><td>打开撤销菜单</td></tr>
+                <tr><td><code>#</code></td><td>添加记忆</td></tr>
+                <tr><td><code>@</code></td><td>文件路径提及（触发自动补全）</td></tr>
+                <tr><td><code>?</code></td><td>查看可用快捷键</td></tr>
+                <tr><td><code>Ctrl+C</code></td><td>中断当前操作</td></tr>
+                <tr><td><code>Ctrl+D</code></td><td>退出会话</td></tr>
+                <tr><td><code>Ctrl+L</code></td><td>清屏</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card table-card" id="card-bash" data-search="bash 命令 执行 终端 shell 感叹号 ! ls git status npm run cat 直接">
+            <h3>直接执行命令（Bash 模式）</h3>
+            <table>
+              <thead><tr><th>用法</th><th>说明</th></tr></thead>
+              <tbody>
+                <tr><td><code>! &lt;command&gt;</code></td><td>在会话内直接执行 bash 命令，如 <code>! ls</code>、<code>! git status</code></td></tr>
+                <tr><td><code>! npm run test</code></td><td>直接跑测试</td></tr>
+                <tr><td><code>! cat src/index.ts</code></td><td>查看文件内容</td></tr>
+              </tbody>
+            </table>
+            <div class="tip">输入 <code>!</code> 前缀 + 空格 + 命令，不用退出 Claude 就能执行终端命令（<code>!</code> 紧跟命令也可以）</div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <!-- C. 高频场景 -->
-  <div class="section" data-section="scenarios" data-search="场景 prompt 说法 推荐 怎么说 怎么用">
-    <div class="section-title">C. 高频场景 — 推荐说法 + 操作</div>
-    <div class="cards">
-      <div class="card" data-search="指定 文件 文件夹 路径 代码 粘贴 paste 引用 怎么 at @ 拖拽 copy">
-        <h3>指定文件/代码</h3>
-        <div class="prompt-block">"帮我看看 src/utils/auth.ts"
+      <!-- ==================== C. Skills 与 MCP ==================== -->
+      <div class="section" id="section-skills-mcp" data-search="skills skill 技能 mcp 协议 工具 服务器 server 插件 扩展">
+        <div class="section-title">C. Skills 与 MCP</div>
+        <div class="cards">
+          <div class="card table-card" id="card-skills" data-search="使用 安装 卸载 查看 创建 目录 SKILL.md context skills plugin skill 技能 slash npx add-skill 插件 对话">
+            <h3>Skills（自定义技能）</h3>
+            <table>
+              <thead><tr><th>操作</th><th>做法</th></tr></thead>
+              <tbody>
+                <tr><td>查看已有 skill</td><td><code>/skills</code></td></tr>
+                <tr><td>使用 skill</td><td>输入 <code>/skill名称</code>，如 <code>/simplify</code>、<code>/batch</code></td></tr>
+                <tr><td>安装（插件系统）</td><td><code>/plugin</code> → 选择安装</td></tr>
+                <tr><td>安装（对话里说）</td><td>直接说"安装 xxx skill"，Claude 帮你操作</td></tr>
+                <tr><td>安装（手动）</td><td>把 skill 文件夹复制到 <code>~/.claude/skills/</code></td></tr>
+                <tr><td>安装（npx）</td><td><code>npx add-skill &lt;仓库名&gt;</code></td></tr>
+                <tr><td>卸载 skill</td><td>删除 <code>~/.claude/skills/对应文件夹/</code></td></tr>
+                <tr><td>自己写 skill</td><td>创建 <code>~/.claude/skills/名称/SKILL.md</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card" id="card-skill-path" data-search="存放 位置 目录 个人 项目 全局 路径 skill">
+            <h3>Skill 存放位置</h3>
+            <table style="font-size:0.82rem; width:100%; border-collapse:collapse;">
+              <tbody>
+                <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>~/.claude/skills/</code></td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">个人全局，所有项目可用</td></tr>
+                <tr><td style="padding:0.2rem 0.4rem"><code>.claude/skills/</code>（项目下）</td><td style="padding:0.2rem 0.4rem">项目级，可提交 git 共享</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card" id="card-builtin-skills" data-search="内置 simplify batch debug loop claude-api 审查 批量 改动 诊断 定时 重复 skill">
+            <h3>内置 Skill</h3>
+            <table style="font-size:0.82rem; width:100%; border-collapse:collapse;">
+              <tbody>
+                <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>/simplify</code></td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">审查最近改动的代码质量，自动修复</td></tr>
+                <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>/batch &lt;指令&gt;</code></td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">跨文件批量执行大规模改动</td></tr>
+                <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>/debug</code></td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">诊断当前会话</td></tr>
+                <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>/loop</code></td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">定时重复执行 prompt</td></tr>
+                <tr><td style="padding:0.2rem 0.4rem"><code>/claude-api</code></td><td style="padding:0.2rem 0.4rem">加载 Claude API 参考</td></tr>
+              </tbody>
+            </table>
+            <div class="tip">skill 太多会占上下文，用 <code>/context</code> 检查是否有被排除的 skill</div>
+          </div>
+          <div class="card table-card" id="card-mcp-cmd" data-search="添加 add 列表 list 删除 remove 查看 get 安装 配置 mcp server 服务器 命令">
+            <h3>MCP 常用命令</h3>
+            <table>
+              <thead><tr><th>命令</th><th>说明</th></tr></thead>
+              <tbody>
+                <tr><td><code>claude mcp add &lt;名称&gt;</code></td><td>添加 MCP 服务器</td></tr>
+                <tr><td><code>claude mcp add-json &lt;名称&gt; '&lt;json&gt;'</code></td><td>用 JSON 配置直接添加</td></tr>
+                <tr><td><code>claude mcp list</code></td><td>查看已安装的 MCP 服务器</td></tr>
+                <tr><td><code>claude mcp get &lt;名称&gt;</code></td><td>查看/测试某个服务器</td></tr>
+                <tr><td><code>claude mcp remove &lt;名称&gt;</code></td><td>移除 MCP 服务器</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card" id="card-mcp-scope" data-search="配置 层级 文件 .mcp.json claude.json 项目 用户 团队 scope 作用域 mcp local project user">
+            <h3>MCP 配置层级</h3>
+            <table style="font-size:0.82rem; width:100%; border-collapse:collapse;">
+              <tbody>
+                <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>local</code>（默认）</td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">个人，当前项目</td></tr>
+                <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>project</code></td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">团队共享，存 <code>.mcp.json</code></td></tr>
+                <tr><td style="padding:0.2rem 0.4rem"><code>user</code></td><td style="padding:0.2rem 0.4rem">个人全局</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card" id="card-mcp-example" data-search="示例 github 安装 example http transport scope user mcp">
+            <h3>示例：添加 GitHub MCP</h3>
+            <div class="prompt-block">claude mcp add --transport http \
+  github https://api.githubcopilot.com/mcp/</div>
+            <div class="tip">添加或修改 MCP 后需重启 Claude Code 生效。API Key 等敏感信息可用 <code>${VAR}</code> 环境变量引用</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== D. 机制详解 ==================== -->
+      <div class="section" id="section-mechanism" data-search="机制 记忆 规则 CLAUDE.md 上下文 权限 permission context memory">
+        <div class="section-title">D. 机制详解</div>
+        <div class="cards">
+          <div class="card table-card" id="card-claude-md" data-search="长期 规则 CLAUDE.md 跨项目 偏好 用户 临时 prompt 会话 记忆 memory init 初始化 层级 项目 团队">
+            <h3>项目记忆与规则（CLAUDE.md 层级）</h3>
+            <table>
+              <thead><tr><th>层级</th><th>文件/方式</th><th>作用域</th></tr></thead>
+              <tbody>
+                <tr><td>项目级</td><td><code>CLAUDE.md</code>（项目根目录）</td><td>当前项目，团队共享</td></tr>
+                <tr><td>用户级</td><td><code>~/.claude/CLAUDE.md</code></td><td>所有项目，个人偏好</td></tr>
+                <tr><td>会话级</td><td>用 <code>#</code> 或 <code>/memory</code></td><td>当前会话</td></tr>
+                <tr><td>一次性</td><td>直接写在 prompt 里</td><td>仅本次对话</td></tr>
+              </tbody>
+            </table>
+            <div class="tip">用 <code>/init</code> 一键创建 <code>CLAUDE.md</code>，把常用规范写进去就不用每次重复了</div>
+          </div>
+          <div class="card table-card" id="card-context" data-search="上下文 管理 compact clear 压缩 清空 对话 长 满 窗口 空间 token context">
+            <h3>上下文管理机制</h3>
+            <table>
+              <thead><tr><th>情况</th><th>操作</th><th>效果</th></tr></thead>
+              <tbody>
+                <tr><td>对话太长/快满</td><td><code>/compact</code></td><td>压缩上下文，保留关键信息</td></tr>
+                <tr><td>只保留部分</td><td><code>/compact [指令]</code></td><td>按指令选择性压缩</td></tr>
+                <tr><td>换任务</td><td><code>/clear</code></td><td>清空对话，重新开始</td></tr>
+                <tr><td>想知道剩余空间</td><td><code>/context</code></td><td>查看上下文使用情况</td></tr>
+                <tr><td>自动压缩</td><td>（自动触发）</td><td>快满时 Claude 自动压缩历史消息</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card table-card" id="card-permission" data-search="权限 模式 permission mode auto accept plan 自动 接受 安全 审查 shift tab alt">
+            <h3>权限模式说明</h3>
+            <table>
+              <thead><tr><th>模式</th><th>说明</th><th>切换</th></tr></thead>
+              <tbody>
+                <tr><td>普通模式</td><td>每次文件修改/命令执行需要你确认</td><td>默认</td></tr>
+                <tr><td>自动接受</td><td>自动接受 Claude 的文件修改</td><td><code>Shift+Tab</code> / <code>Alt+M</code></td></tr>
+                <tr><td>Plan 模式</td><td>只出方案不执行，适合大改前审查</td><td><code>Shift+Tab</code> / <code>Alt+M</code> 再按一次</td></tr>
+              </tbody>
+            </table>
+            <div class="tip">大改之前先切 Plan 模式看方案，确认后再切回普通模式执行</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ==================== E. 进阶技巧 ==================== -->
+      <div class="section" id="section-advanced" data-search="进阶 技巧 场景 prompt 说法 推荐 避坑 vscode vs code 编辑器">
+        <div class="section-title">E. 进阶技巧</div>
+        <div class="cards">
+          <div class="card" id="card-adv-file" data-search="指定 文件 文件夹 路径 代码 粘贴 paste 引用 怎么 at @ 拖拽 copy">
+            <h3>指定文件/代码</h3>
+            <div class="prompt-block">"帮我看看 src/utils/auth.ts"
 "分析 src/components/ 下所有组件"
 直接粘贴代码 → "帮我把这段改成 TypeScript"</div>
-        <div class="tip">CLI 里不需要 @ 或拖拽，直接说路径或贴代码就行。VS Code 里可用 <code>@文件名</code>（见 E 区）</div>
-      </div>
-      <div class="card" data-search="看懂 理解 架构 解释 梳理 项目 代码 阅读 读懂 结构 依赖">
-        <h3>看懂项目/代码</h3>
-        <div class="prompt-block">"帮我梳理这个项目的整体架构"
+            <div class="tip">CLI 里不需要 @ 或拖拽，直接说路径或贴代码就行。VS Code 里可用 <code>@文件名</code></div>
+          </div>
+          <div class="card" id="card-adv-understand" data-search="看懂 理解 架构 解释 梳理 项目 代码 阅读 读懂 结构 依赖">
+            <h3>看懂项目/代码</h3>
+            <div class="prompt-block">"帮我梳理这个项目的整体架构"
 "解释这个函数的逻辑"
 "这个模块和哪些文件有依赖关系？"</div>
-        <div class="tip">直接输入即可，Claude 会自动读取项目文件</div>
-      </div>
-      <div class="card" data-search="修改 重构 改 替换 async 代码 refactor 变量 最小范围">
-        <h3>修改代码</h3>
-        <div class="prompt-block">"把这个函数改成 async 的，只改最小范围"
+            <div class="tip">直接输入即可，Claude 会自动读取项目文件</div>
+          </div>
+          <div class="card" id="card-adv-modify" data-search="修改 重构 改 替换 async 代码 refactor 变量 最小范围">
+            <h3>修改代码</h3>
+            <div class="prompt-block">"把这个函数改成 async 的，只改最小范围"
 "把所有 var 替换成 const/let"</div>
-        <div class="tip">加"只改最小范围"防止过度重构。怕改错先 <code>Shift+Tab</code> 切 Plan 模式</div>
-      </div>
-      <div class="card" data-search="bug 修 报错 错误 fix 调试 debug 修复 root cause 问题 patch">
-        <h3>修 Bug</h3>
-        <div class="prompt-block">"这个报错的 root cause 是什么？先分析再给 patch"
+            <div class="tip">加"只改最小范围"防止过度重构。怕改错先 <code>Shift+Tab</code> 切 Plan 模式</div>
+          </div>
+          <div class="card" id="card-adv-bug" data-search="bug 修 报错 错误 fix 调试 debug 修复 root cause 问题 patch">
+            <h3>修 Bug</h3>
+            <div class="prompt-block">"这个报错的 root cause 是什么？先分析再给 patch"
 "运行测试，失败的话帮我修"</div>
-        <div class="tip">让它先分析原因，修之前先 <code>git commit</code> 保底</div>
-      </div>
-      <div class="card" data-search="新功能 功能 feature 实现 方案 plan 设计 添加 加">
-        <h3>加新功能</h3>
-        <div class="prompt-block">"先给我实现方案，别直接写代码"  ← 先审方案
+            <div class="tip">让它先分析原因，修之前先 <code>git commit</code> 保底</div>
+          </div>
+          <div class="card" id="card-adv-feature" data-search="新功能 功能 feature 实现 方案 plan 设计 添加 加">
+            <h3>加新功能</h3>
+            <div class="prompt-block">"先给我实现方案，别直接写代码"  ← 先审方案
 "按你说的方案开始实现吧"      ← 确认后动手</div>
-        <div class="tip"><code>Shift+Tab</code> 切 Plan 模式 → 看方案 → 确认后切回普通模式执行</div>
-      </div>
-      <div class="card" data-search="运行 测试 命令 test build 执行 跑 npm 构建 lint pnpm">
-        <h3>跑命令/测试</h3>
-        <div class="prompt-block">"运行 npm run test，失败的话帮我修"
+            <div class="tip"><code>Shift+Tab</code> 切 Plan 模式 → 看方案 → 确认后切回普通模式执行</div>
+          </div>
+          <div class="card" id="card-adv-run" data-search="运行 测试 命令 test build 执行 跑 npm 构建 lint pnpm">
+            <h3>跑命令/测试</h3>
+            <div class="prompt-block">"运行 npm run test，失败的话帮我修"
 "执行 npm run build 看看有没有报错"
 "帮我跑 pnpm lint 并自动修复"</div>
-        <div class="tip">Claude 可直接执行终端命令，不用切出去</div>
+            <div class="tip">Claude 可直接执行终端命令，不用切出去。也可用 <code>!</code> 前缀直接跑</div>
+          </div>
+          <div class="card" data-search="拆分 步骤 需求 一句话 小步 避坑 建议 注意">
+            <h3>不要一句话塞太多需求</h3>
+            <p>拆成小步骤，一次一个任务</p>
+          </div>
+          <div class="card" data-search="plan 模式 方案 大改 重构 shift tab 避坑">
+            <h3>大改之前先出 plan</h3>
+            <p><code>Shift+Tab</code> 切到 Plan 模式，先看方案再执行</p>
+          </div>
+          <div class="card" data-search="CLAUDE.md 规范 规则 重复 约定 项目 避坑">
+            <h3>项目规范写进 CLAUDE.md</h3>
+            <p>不用每次重复说</p>
+          </div>
+          <div class="card" data-search="compact clear 上下文 满 对话 长 换任务 避坑">
+            <h3>上下文管理</h3>
+            <p>快满了用 <code>/compact</code>，换任务用 <code>/clear</code></p>
+          </div>
+          <div class="card" data-search="git commit 回退 保存 版本 重要 改动 避坑">
+            <h3>重要改动前先 git commit</h3>
+            <p>方便回退</p>
+          </div>
+          <div class="card" data-search="doctor 诊断 问题 配置 环境 排查 避坑">
+            <h3>遇到问题先 /doctor 诊断</h3>
+            <p>排查配置和环境问题</p>
+          </div>
+          <div class="card table-card" id="card-adv-vscode" data-search="vscode vs code 编辑器 ide 插件 扩展 打开 图标 状态栏 文件 引用 选中 代码 plan 模式 方案 auto-accept diff 新对话 cmd option">
+            <h3>VS Code 专区</h3>
+            <table>
+              <thead><tr><th>我想...</th><th>做法</th></tr></thead>
+              <tbody>
+                <tr><td>打开 Claude</td><td>点击右上角 ✱ 图标，或状态栏 Claude Code</td></tr>
+                <tr><td>引用某个文件</td><td>输入 <code>@文件名</code> 或用 <code>Option+K</code></td></tr>
+                <tr><td>引用选中的代码</td><td>先选中代码，再在 Claude 面板提问</td></tr>
+                <tr><td>怕它乱改</td><td>用 Plan 模式（<code>Shift+Tab</code> 切换），先看方案再执行</td></tr>
+                <tr><td>看实时修改</td><td>开启 auto-accept，实时看 diff</td></tr>
+                <tr><td>开新对话</td><td><code>Cmd+N</code></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
-      <div class="card" data-search="记住 记忆 规则 偏好 风格 项目 pnpm vitest 约定 规范 CLAUDE.md init memory">
-        <h3>记住项目规则</h3>
-        <table style="font-size:0.82rem; width:100%; border-collapse:collapse;">
-          <tbody>
-            <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>#</code> + 规则内容</td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">当前会话立即记住</td></tr>
-            <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>/memory</code></td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">查看和编辑已有记忆</td></tr>
-            <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>/init</code> → 编辑 <code>CLAUDE.md</code></td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">长期项目规则</td></tr>
-            <tr><td style="padding:0.2rem 0.4rem"><code>~/.claude/CLAUDE.md</code></td><td style="padding:0.2rem 0.4rem">跨项目个人偏好</td></tr>
-          </tbody>
-        </table>
-      </div>
+
+      <div class="no-results" id="noResults">没有找到匹配的内容，试试其他关键词？</div>
     </div>
   </div>
-
-  <!-- D. 项目记忆与规则 -->
-  <div class="section" data-section="memory" data-search="记忆 规则 memory CLAUDE.md 偏好 配置 项目 规范">
-    <div class="section-title">D. 项目记忆与规则</div>
-    <div class="cards">
-      <div class="card table-card" data-search="长期 规则 CLAUDE.md 跨项目 偏好 用户 临时 prompt 会话 记忆 memory init 初始化 层级">
-        <table>
-          <thead><tr><th>层级</th><th>文件/方式</th><th>作用域</th></tr></thead>
-          <tbody>
-            <tr><td>项目级</td><td><code>CLAUDE.md</code>（项目根目录）</td><td>当前项目，团队共享</td></tr>
-            <tr><td>用户级</td><td><code>~/.claude/CLAUDE.md</code></td><td>所有项目，个人偏好</td></tr>
-            <tr><td>会话级</td><td>用 <code>#</code> 或 <code>/memory</code></td><td>当前会话</td></tr>
-            <tr><td>一次性</td><td>直接写在 prompt 里</td><td>仅本次对话</td></tr>
-          </tbody>
-        </table>
-        <div class="tip">用 <code>/init</code> 一键创建 <code>CLAUDE.md</code>，把常用规范写进去就不用每次重复了</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- E. Skills -->
-  <div class="section" data-section="skills" data-search="skills skill 技能 自定义 命令 slash 插件 扩展 安装 卸载 plugin">
-    <div class="section-title">E. Skills（自定义技能）</div>
-    <div class="cards">
-      <div class="card table-card" data-search="使用 安装 卸载 查看 创建 目录 SKILL.md context skills plugin skill 技能 slash npx add-skill 插件 对话">
-        <h3>Skills 是可复用的扩展能力包，放到指定目录自动加载</h3>
-        <table>
-          <thead><tr><th>操作</th><th>做法</th></tr></thead>
-          <tbody>
-            <tr><td>查看已有 skill</td><td><code>/skills</code></td></tr>
-            <tr><td>使用 skill</td><td>输入 <code>/skill名称</code>，如 <code>/simplify</code>、<code>/batch</code></td></tr>
-            <tr><td>安装（插件系统）</td><td><code>/plugin</code> → 选择安装</td></tr>
-            <tr><td>安装（对话里说）</td><td>直接说"安装 xxx skill"，Claude 帮你操作</td></tr>
-            <tr><td>安装（手动）</td><td>把 skill 文件夹复制到 <code>~/.claude/skills/</code></td></tr>
-            <tr><td>安装（npx）</td><td><code>npx add-skill &lt;仓库名&gt;</code></td></tr>
-            <tr><td>卸载 skill</td><td>删除 <code>~/.claude/skills/对应文件夹/</code></td></tr>
-            <tr><td>自己写 skill</td><td>创建 <code>~/.claude/skills/名称/SKILL.md</code></td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card" data-search="存放 位置 目录 个人 项目 全局 路径">
-        <h3>Skill 存放位置</h3>
-        <table style="font-size:0.82rem; width:100%; border-collapse:collapse;">
-          <tbody>
-            <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>~/.claude/skills/</code></td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">个人全局，所有项目可用</td></tr>
-            <tr><td style="padding:0.2rem 0.4rem"><code>.claude/skills/</code>（项目下）</td><td style="padding:0.2rem 0.4rem">项目级，可提交 git 共享</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card" data-search="内置 simplify batch 审查 批量 改动">
-        <h3>内置 Skill</h3>
-        <table style="font-size:0.82rem; width:100%; border-collapse:collapse;">
-          <tbody>
-            <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>/simplify</code></td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">审查最近改动的代码质量，自动修复</td></tr>
-            <tr><td style="padding:0.2rem 0.4rem"><code>/batch &lt;指令&gt;</code></td><td style="padding:0.2rem 0.4rem">跨文件批量执行大规模改动</td></tr>
-          </tbody>
-        </table>
-        <div class="tip">skill 太多会占上下文，用 <code>/context</code> 检查是否有被排除的 skill</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- G. MCP -->
-  <div class="section" data-section="mcp" data-search="mcp 协议 工具 服务器 server 外部 集成 插件 github playwright">
-    <div class="section-title">F. MCP（外部工具集成）</div>
-    <div class="cards">
-      <div class="card table-card" data-search="添加 add 列表 list 删除 remove 查看 get 安装 配置 mcp server 服务器 命令">
-        <h3>常用命令</h3>
-        <table>
-          <thead><tr><th>命令</th><th>说明</th></tr></thead>
-          <tbody>
-            <tr><td><code>claude mcp add &lt;名称&gt;</code></td><td>添加 MCP 服务器</td></tr>
-            <tr><td><code>claude mcp add-json &lt;名称&gt; '&lt;json&gt;'</code></td><td>用 JSON 配置直接添加</td></tr>
-            <tr><td><code>claude mcp list</code></td><td>查看已安装的 MCP 服务器</td></tr>
-            <tr><td><code>claude mcp get &lt;名称&gt;</code></td><td>查看/测试某个服务器</td></tr>
-            <tr><td><code>claude mcp remove &lt;名称&gt;</code></td><td>移除 MCP 服务器</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card" data-search="配置 层级 文件 .mcp.json claude.json 项目 用户 团队 scope 作用域">
-        <h3>配置层级</h3>
-        <table style="font-size:0.82rem; width:100%; border-collapse:collapse;">
-          <tbody>
-            <tr><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)">项目级</td><td style="padding:0.2rem 0.4rem;border-bottom:1px solid var(--border)"><code>.mcp.json</code>（项目根目录，团队共享）</td></tr>
-            <tr><td style="padding:0.2rem 0.4rem">用户级</td><td style="padding:0.2rem 0.4rem"><code>~/.claude.json</code>（个人全局）</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="card" data-search="示例 github 安装 example npx scope user">
-        <h3>示例：添加 GitHub MCP</h3>
-        <div class="prompt-block">claude mcp add github \
-  --scope user -- \
-  npx -y @modelcontextprotocol/server-github</div>
-        <div class="tip">添加或修改 MCP 后需重启 Claude Code 生效。API Key 等敏感信息可用 <code>${VAR}</code> 环境变量引用</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- E. VS Code 专区 -->
-  <div class="section" data-section="vscode" data-search="vscode vs code 编辑器 ide 插件 扩展">
-    <div class="section-title">G. VS Code 用户专区</div>
-    <div class="cards">
-      <div class="card table-card" data-search="打开 图标 状态栏 文件 引用 选中 代码 plan 模式 方案 auto-accept diff 新对话 cmd option">
-        <table>
-          <thead><tr><th>我想...</th><th>做法</th></tr></thead>
-          <tbody>
-            <tr><td>打开 Claude</td><td>点击右上角 ✱ 图标，或状态栏 Claude Code</td></tr>
-            <tr><td>引用某个文件</td><td>输入 <code>@文件名</code> 或用 <code>Option+K</code></td></tr>
-            <tr><td>引用选中的代码</td><td>先选中代码，再在 Claude 面板提问</td></tr>
-            <tr><td>怕它乱改</td><td>用 Plan 模式（<code>Shift+Tab</code> 切换），先看方案再执行</td></tr>
-            <tr><td>看实时修改</td><td>开启 auto-accept，实时看 diff</td></tr>
-            <tr><td>开新对话</td><td><code>Cmd+N</code></td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
-  <!-- F. 避坑指南 -->
-  <div class="section" data-section="tips" data-search="避坑 技巧 建议 注意 最佳实践 经验">
-    <div class="section-title">H. 避坑指南</div>
-    <div class="cards">
-      <div class="card" data-search="拆分 步骤 需求 一句话 小步">
-        <h3>不要一句话塞太多需求</h3>
-        <p>拆成小步骤，一次一个任务</p>
-      </div>
-      <div class="card" data-search="plan 模式 方案 大改 重构 shift tab">
-        <h3>大改之前先出 plan</h3>
-        <p><code>Shift+Tab</code> 切到 Plan 模式，先看方案再执行</p>
-      </div>
-      <div class="card" data-search="CLAUDE.md 规范 规则 重复 约定 项目">
-        <h3>项目规范写进 CLAUDE.md</h3>
-        <p>不用每次重复说</p>
-      </div>
-      <div class="card" data-search="compact clear 上下文 满 对话 长 换任务">
-        <h3>上下文管理</h3>
-        <p>快满了用 <code>/compact</code>，换任务用 <code>/clear</code></p>
-      </div>
-      <div class="card" data-search="git commit 回退 保存 版本 重要 改动">
-        <h3>重要改动前先 git commit</h3>
-        <p>方便回退</p>
-      </div>
-      <div class="card" data-search="doctor 诊断 问题 配置 环境 排查">
-        <h3>遇到问题先 /doctor 诊断</h3>
-        <p>排查配置和环境问题</p>
-      </div>
-    </div>
-  </div>
-
-  <div class="no-results" id="noResults">没有找到匹配的内容，试试其他关键词？</div>
 </div>
+
+<!-- Toast -->
+<div class="toast" id="toast">已复制到剪贴板！</div>
 
 <script>
 (function() {
-  const searchInput = document.getElementById('search');
-  const tags = document.querySelectorAll('.tag');
-  const sections = document.querySelectorAll('.section');
-  const noResults = document.getElementById('noResults');
-  const themeToggle = document.getElementById('themeToggle');
+  var searchInput = document.getElementById('search');
+  var sections = document.querySelectorAll('.section');
+  var noResults = document.getElementById('noResults');
+  var themeToggle = document.getElementById('themeToggle');
+  var sidebarNav = document.getElementById('sidebarNav');
+  var sectionLinks = sidebarNav.querySelectorAll(':scope > li > a');
+  var hamburger = document.getElementById('hamburger');
+  var sidebar = document.getElementById('sidebar');
+  var sidebarOverlay = document.getElementById('sidebarOverlay');
+  var toast = document.getElementById('toast');
 
   // Theme
-  const savedTheme = localStorage.getItem('cc-theme');
+  var savedTheme = localStorage.getItem('cc-theme');
   if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
     document.documentElement.setAttribute('data-theme', 'dark');
     themeToggle.textContent = '☀️';
   }
   themeToggle.addEventListener('click', function() {
-    const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
     document.documentElement.setAttribute('data-theme', isDark ? '' : 'dark');
     themeToggle.textContent = isDark ? '🌙' : '☀️';
     localStorage.setItem('cc-theme', isDark ? 'light' : 'dark');
   });
 
-  // Tag filter
-  let activeSection = 'all';
-  tags.forEach(function(tag) {
-    tag.addEventListener('click', function() {
-      tags.forEach(function(t) { t.classList.remove('active'); });
-      tag.classList.add('active');
-      activeSection = tag.dataset.section;
-      applyFilters();
+  // Mobile hamburger
+  function toggleSidebar() {
+    sidebar.classList.toggle('open');
+    sidebarOverlay.classList.toggle('open');
+  }
+  hamburger.addEventListener('click', toggleSidebar);
+  sidebarOverlay.addEventListener('click', toggleSidebar);
+
+  // All clickable links in sidebar (sections + sub-items)
+  var allNavLinks = sidebarNav.querySelectorAll('a');
+  allNavLinks.forEach(function(link) {
+    link.addEventListener('click', function(e) {
+      e.preventDefault();
+      var targetId = link.getAttribute('href').slice(1);
+      var target = document.getElementById(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth' });
+      }
+      if (sidebar.classList.contains('open')) {
+        toggleSidebar();
+      }
     });
   });
+
+  // Scroll spy with sub-item expansion
+  var subLists = sidebarNav.querySelectorAll('.sidebar-sub');
+  var subLinks = sidebarNav.querySelectorAll('.sidebar-sub a');
+
+  function updateScrollSpy() {
+    var currentSection = '';
+    var currentCard = '';
+
+    sections.forEach(function(section) {
+      var rect = section.getBoundingClientRect();
+      if (rect.top <= 80) {
+        currentSection = section.id;
+      }
+    });
+
+    // Find current card
+    var allCards = document.querySelectorAll('.card[id]');
+    allCards.forEach(function(card) {
+      var rect = card.getBoundingClientRect();
+      if (rect.top <= 120) {
+        currentCard = card.id;
+      }
+    });
+
+    // Update section links
+    sectionLinks.forEach(function(link) {
+      link.classList.toggle('active', link.dataset.section === currentSection);
+    });
+
+    // Expand/collapse sub-lists
+    subLists.forEach(function(sub) {
+      sub.classList.toggle('expanded', sub.dataset.parent === currentSection);
+    });
+
+    // Highlight current sub-item
+    subLinks.forEach(function(link) {
+      var href = link.getAttribute('href').slice(1);
+      link.classList.toggle('active', href === currentCard);
+    });
+  }
+
+  window.addEventListener('scroll', updateScrollSpy, { passive: true });
+  updateScrollSpy();
 
   // Search
   searchInput.addEventListener('input', function() {
@@ -611,16 +929,10 @@ body {
   });
 
   function applyFilters() {
-    const query = searchInput.value.trim().toLowerCase();
-    let anyVisible = false;
+    var query = searchInput.value.trim().toLowerCase();
+    var anyVisible = false;
 
     sections.forEach(function(section) {
-      const sectionMatch = activeSection === 'all' || section.dataset.section === activeSection;
-      if (!sectionMatch) {
-        section.classList.add('hidden');
-        return;
-      }
-
       if (!query) {
         section.classList.remove('hidden');
         section.querySelectorAll('.card').forEach(function(c) { c.classList.remove('hidden'); });
@@ -628,13 +940,13 @@ body {
         return;
       }
 
-      const sectionSearchData = (section.dataset.search || '').toLowerCase();
-      const cards = section.querySelectorAll('.card');
-      let sectionHasMatch = false;
+      var sectionSearchData = (section.dataset.search || '').toLowerCase();
+      var cards = section.querySelectorAll('.card');
+      var sectionHasMatch = false;
 
       cards.forEach(function(card) {
-        const cardText = (card.dataset.search || '').toLowerCase() + ' ' + card.textContent.toLowerCase();
-        const match = query.split(/\s+/).every(function(term) {
+        var cardText = (card.dataset.search || '').toLowerCase() + ' ' + card.textContent.toLowerCase();
+        var match = query.split(/\s+/).every(function(term) {
           return cardText.indexOf(term) !== -1 || sectionSearchData.indexOf(term) !== -1;
         });
         card.classList.toggle('hidden', !match);
@@ -646,6 +958,49 @@ body {
     });
 
     noResults.style.display = anyVisible ? 'none' : 'block';
+  }
+
+  // Card focus highlight
+  document.addEventListener('click', function(e) {
+    var card = e.target.closest('.card');
+    if (card) {
+      document.querySelectorAll('.card.focused').forEach(function(c) { c.classList.remove('focused'); });
+      card.classList.add('focused');
+    } else if (!e.target.closest('.sidebar') && !e.target.closest('.search-box') && !e.target.closest('.theme-btn')) {
+      document.querySelectorAll('.card.focused').forEach(function(c) { c.classList.remove('focused'); });
+    }
+  });
+
+  // Click code to copy
+  var toastTimer = null;
+  document.addEventListener('click', function(e) {
+    var code = e.target.closest('code');
+    if (!code) return;
+    var text = code.textContent.trim();
+    if (!text) return;
+
+    navigator.clipboard.writeText(text).then(function() {
+      showToast('已复制到剪贴板！');
+    }).catch(function() {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('已复制到剪贴板！');
+    });
+  });
+
+  function showToast(msg) {
+    toast.textContent = msg;
+    toast.classList.add('show');
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() {
+      toast.classList.remove('show');
+    }, 2000);
   }
 
   // Keyboard shortcut: / to focus search
